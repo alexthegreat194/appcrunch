@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import Field
-from sqlalchemy import table
-from sqlmodel import SQLModel
+from turtle import back
+from typing import List, Optional
+from sqlmodel import SQLModel, Relationship, Field
 
 # User
 class User(SQLModel, table=True):
@@ -18,6 +17,9 @@ class User(SQLModel, table=True):
     pronouns: Optional[str]
     website: Optional[str]
 
+    ideas: List[Idea] = Relationship(back_populates='user')
+    comments: List[Comment] = Relationship(back_populates='user')
+    upvotes: List[Upvote] = Relationship(back_populates='user')
 
 # Idea
 class Idea(SQLModel, table=True):
@@ -29,6 +31,7 @@ class Idea(SQLModel, table=True):
     created_at: datetime 
 
     user_id: int = Field(default=None, foreign_key='user.id')
+    user: User = Relationship(back_populates='ideas')
 
 
 # Comment
@@ -40,8 +43,12 @@ class Comment(SQLModel, table=True):
     created_at: datetime
 
     user_id: int = Field(default=None, foreign_key='user.id')
+    user: User = Relationship(back_populates='comments')
+
     idea_id: int = Field(default=None, foreign_key='idea.id')
-    reply_id: int = Field(default=None, foreign_key='comment.id')
+    idea: User = Relationship(back_populates='comments')
+
+    reply_id: Optional[int] = Field(default=None, foreign_key='comment.id')
 
 
 # Upvote
@@ -52,4 +59,8 @@ class Upvote(SQLModel, table=True):
     created_at: datetime
 
     user_id: int = Field(default=None, foreign_key='user.id')
+    user: User = Relationship(back_populates='upvotes')
+
     idea_id: int = Field(default=None, foreign_key='idea.id')
+    idea: Idea = Relationship(back_populates='ideas')
+
