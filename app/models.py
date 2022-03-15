@@ -30,6 +30,7 @@ class Idea(SQLModel, table=True):
 
     user_id: int = Field(default=None, foreign_key='user.id')
 
+
 # Comment
 class Comment(SQLModel, table=True):
     __tablename__ = 'comment'
@@ -41,6 +42,7 @@ class Comment(SQLModel, table=True):
     user_id: int = Field(default=None, foreign_key='user.id')
     idea_id: int = Field(default=None, foreign_key='idea.id')
     reply_id: int = Field(default=None, foreign_key='comment.id')
+
 
 # Upvote
 class Upvote(SQLModel, table=True):
