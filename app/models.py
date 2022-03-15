@@ -1,5 +1,4 @@
 from datetime import datetime
-from turtle import back
 from typing import List, Optional
 from sqlmodel import SQLModel, Relationship, Field
 
@@ -17,9 +16,9 @@ class User(SQLModel, table=True):
     pronouns: Optional[str]
     website: Optional[str]
 
-    ideas: List[Idea] = Relationship(back_populates='user')
-    comments: List[Comment] = Relationship(back_populates='user')
-    upvotes: List[Upvote] = Relationship(back_populates='user')
+    ideas: List["Idea"] = Relationship(back_populates='user')
+    comments: List["Comment"] = Relationship(back_populates='user')
+    upvotes: List["Upvote"] = Relationship(back_populates='user')
 
 # Idea
 class Idea(SQLModel, table=True):
