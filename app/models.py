@@ -38,8 +38,16 @@ class Comment(SQLModel, table=True):
     content: str 
     created_at: datetime
 
-    user_id: int = Field(default=None, foriegn_key='user.id')
-    idea_id: int = Field(default=None, foriegn_key='idea.id')
-    reply_id: int = Field(default=None, foriegn_key='comment.id')
+    user_id: int = Field(default=None, foreign_key='user.id')
+    idea_id: int = Field(default=None, foreign_key='idea.id')
+    reply_id: int = Field(default=None, foreign_key='comment.id')
 
 # Upvote
+class Upvote(SQLModel, table=True):
+    __tablename__ = 'upvote'
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: datetime
+
+    user_id: int = Field(default=None, foreign_key='user.id')
+    idea_id: int = Field(default=None, foreign_key='idea.id')
