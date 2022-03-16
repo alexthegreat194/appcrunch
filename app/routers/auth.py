@@ -45,7 +45,7 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(token: str = Depends(oauth2_scheme)):
     # use when something goes wrong
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -55,11 +55,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     # get username from jwt
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['bcrypt'])
+        print('made it', token)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
         username: str = payload.get('username') # make sure this is right later
         if username is None:
             raise credentials_exception
     except JWTError:
+        print('here')
         raise credentials_exception
 
     # find user in db
@@ -86,8 +88,9 @@ class ReturnStatus(BaseModel):
     success: bool = True
     msg: Optional[str] = None
 
+# Routes
 @router.post('/token', response_model=Token)
-async def login_for_access_tokenken(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -103,7 +106,6 @@ async def login_for_access_tokenken(form_data: OAuth2PasswordRequestForm = Depen
 
 @router.post('/signup', response_model=ReturnStatus)
 async def signup(input: UserInput):
-    print(input.json())
     
     # see if data exists
     with Session(engine) as session:
@@ -127,6 +129,7 @@ async def signup(input: UserInput):
 
     return ReturnStatus()
 
-@router.get('/test')
+@router.get('/test', response_model=User)
 async def test(token: str = Depends(oauth2_scheme)):
-    return {'test': True}
+    user = get_current_user(token=token)
+    return user
