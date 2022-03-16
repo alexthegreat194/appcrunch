@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, create_engine
 from .models import User, Idea, Upvote, Comment
 
 db_url = 'sqlite:///database.db'
-engine = create_engine(db_url, echo=True)
+engine = create_engine(db_url)
 
 def create_db_tables():
     SQLModel.metadata.create_all(engine)

@@ -34,6 +34,7 @@ class Idea(SQLModel, table=True):
     user: User = Relationship(back_populates='ideas')
 
     upvotes: List["Upvote"] = Relationship(back_populates='idea')
+    comments: List["Comment"] = Relationship(back_populates='idea')
 
 
 # Comment
@@ -48,7 +49,7 @@ class Comment(SQLModel, table=True):
     user: User = Relationship(back_populates='comments')
 
     idea_id: int = Field(default=None, foreign_key='idea.id')
-    idea: User = Relationship(back_populates='comments')
+    idea: Idea = Relationship(back_populates='comments')
 
     reply_id: Optional[int] = Field(default=None, foreign_key='comment.id')
 
