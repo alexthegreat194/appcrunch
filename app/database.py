@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, create_engine
-from .models import User, Idea, Upvote, Comment
+from .models import *
 
 db_url = 'sqlite:///database.db'
 engine = create_engine(db_url)

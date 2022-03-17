@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 
-from app.models import Idea, Upvote, User, Comment
+from app.models import Idea, Upvote, User, Comment, IdeaRead
 from app.database import engine
 from app.schema import ReturnStatus
 from app.routers.auth import get_current_user
@@ -17,7 +17,7 @@ router = APIRouter(tags=['ideas'])
 #     upvotes: list[Upvote]
 #     comments: list[Upvote]
 
-@router.get('/ideas', response_model=list[Idea], response_model_include={'comments'})
+@router.get('/ideas', response_model=list[IdeaRead], response_model_include={'comments'})
 def get_all_ideas():
     ideas = []
     with Session(engine) as session:
