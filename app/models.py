@@ -17,9 +17,11 @@ class User(SQLModel, table=True):
     website: Optional[str]
     full_name: Optional[str]
 
+class UserRead(User):
     ideas: List["Idea"] = Relationship(back_populates='user')
     comments: List["Comment"] = Relationship(back_populates='user')
     upvotes: List["Upvote"] = Relationship(back_populates='user')
+
 
 # Idea
 class Idea(SQLModel, table=True):
@@ -31,8 +33,10 @@ class Idea(SQLModel, table=True):
     created_at: datetime 
 
     user_id: int = Field(default=None, foreign_key='user.id')
-    user: User = Relationship(back_populates='ideas')
 
+
+class IdeaRead(Idea):
+    user: User = Relationship(back_populates='ideas')
     upvotes: List["Upvote"] = Relationship(back_populates='idea')
     comments: List["Comment"] = Relationship(back_populates='idea')
 
@@ -46,12 +50,12 @@ class Comment(SQLModel, table=True):
     created_at: datetime
 
     user_id: int = Field(default=None, foreign_key='user.id')
-    user: User = Relationship(back_populates='comments')
-
     idea_id: int = Field(default=None, foreign_key='idea.id')
-    idea: Idea = Relationship(back_populates='comments')
-
     reply_id: Optional[int] = Field(default=None, foreign_key='comment.id')
+
+class CommentRead(Comment):
+    user: User = Relationship(back_populates='comments')
+    idea: Idea = Relationship(back_populates='comments')
 
 
 # Upvote
@@ -62,8 +66,9 @@ class Upvote(SQLModel, table=True):
     created_at: datetime
 
     user_id: int = Field(default=None, foreign_key='user.id')
-    user: User = Relationship(back_populates='upvotes')
-
     idea_id: int = Field(default=None, foreign_key='idea.id')
+
+class UpvoteRead(Upvote):
+    user: User = Relationship(back_populates='upvotes')
     idea: Idea = Relationship(back_populates='upvotes')
 

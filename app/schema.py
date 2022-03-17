@@ -14,3 +14,4 @@ class UserInput(BaseModel):
 class ReturnStatus(BaseModel):
     success: bool = True
     msg: Optional[str] = None
+
