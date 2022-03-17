@@ -9,6 +9,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from app.models import User
 from app.database import engine
+from app.schema import ReturnStatus, Token, UserInput
 
 SECRET_KEY = 'df4a5e279fa58b9c45ac3e5ed35f63515ecd11d3b5f9549c4d098039ed72fab3'
 ALGORITHM = "HS256"
@@ -74,19 +75,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
     return user
 
-
-# Schema
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-class UserInput(BaseModel):
-    username: str
-    password: str
-
-class ReturnStatus(BaseModel):
-    success: bool = True
-    msg: Optional[str] = None
 
 # Routes
 @router.post('/token', response_model=Token)

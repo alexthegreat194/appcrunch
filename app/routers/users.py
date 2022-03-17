@@ -9,7 +9,8 @@ from jose import JWTError, jwt
 
 from app.models import User
 from app.database import engine
-from app.routers.auth import ReturnStatus, oauth2_scheme, get_current_user
+from app.routers.auth import oauth2_scheme, get_current_user
+from app.schema import ReturnStatus
 
 router = APIRouter(tags=['Users'])
 
