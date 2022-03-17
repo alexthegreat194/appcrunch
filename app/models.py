@@ -25,7 +25,7 @@ class User(UserBase, table=True):
 class UserRead(UserBase):
     id: int
 
-class kklko(UserRead):
+class UserReadWithRel(UserRead):
     ideas: List['Idea'] = []
     comments: List["Comment"] = []
     upvotes: List["Upvote"] = []
@@ -50,8 +50,8 @@ class Idea(IdeaBase, table=True):
 class IdeaRead(IdeaBase):
     id: int
 
-class IdeaReadWithRel(IdeaBase):
-    user: Optional[User] = None
+class IdeaReadWithRel(IdeaRead):
+    user: Optional['User'] = None
     upvotes: List['Upvote'] = []
     comments: List['Comment'] = []
 
@@ -98,4 +98,30 @@ class UpvoteRead(UpvoteBase):
 
 class UpvoteReadWithRel(UpvoteRead):
     user: User
-    idea: Idea 
+    idea: Idea
+
+## update all classes ##
+
+# users
+UserBase.update_forward_refs()
+User.update_forward_refs()
+UserRead.update_forward_refs()
+UserReadWithRel.update_forward_refs()
+
+# ideas
+IdeaBase.update_forward_refs()
+Idea.update_forward_refs()
+IdeaRead.update_forward_refs()
+IdeaReadWithRel.update_forward_refs()
+
+# comments
+CommentBase.update_forward_refs()
+Comment.update_forward_refs()
+CommentRead.update_forward_refs()
+CommentReadWithRel.update_forward_refs()
+
+# upvotes
+UpvoteBase.update_forward_refs()
+Upvote.update_forward_refs()
+UpvoteRead.update_forward_refs()
+UpvoteReadWithRel.update_forward_refs()
