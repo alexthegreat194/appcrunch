@@ -1,8 +1,9 @@
+from curses.ascii import US
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
-import sqlalchemy
 from sqlmodel import Session
+import sqlalchemy
 from sqlalchemy import select
 from jose import JWTError, jwt
 
@@ -25,30 +26,22 @@ def get_users(limit: Optional[int] = None):
                 if len(users) >= limit:
                     break
             users.append(user)
-            print('User:', user.username)
-    print('----before----:', users)
     return users
         
 
 @router.get('/users/{username}', response_model=User, response_model_exclude={'password_hash'})
 def get_user_by_username(username: str):
     with Session(engine) as session:
-        statement = select(User).select_from(User).where(User.username == username)
-        result = session.exec(statement).first()
+        statement = sqlalchemy.select(User).where(User.username == username)
+        result = session.execute(statement).scalars().first()
         return result 
 
-@router.get('/users/{user_id}', response_model=User, response_model_exclude={'password_hash'})
+@router.get('/users/id/{user_id}', response_model=User, response_model_exclude={'password_hash'})
 def get_user_by_id(user_id: int):
-    print('\n')
-    print('this is the result: -')
-    print('\n')
     with Session(engine) as session:
         statement = sqlalchemy.select(User).where(User.id == user_id)
-        result = session.exec(statement).first()
-        print('\n')
-        print('this is the result: -', result)
-        print('\n')
-    return result 
+        result = session.execute(statement).scalars().first()
+        return result 
 
 class UserIn(BaseModel):
     email: Optional[str]
@@ -60,8 +53,6 @@ class UserIn(BaseModel):
 
 @router.put('/users', response_model=ReturnStatus)
 def change_user_data(data: UserIn, user: User = Depends(get_current_user)):
-    print('-----')
-    print(data.json(), user.json())
     with Session(engine) as session:
         user.email = data.email
         user.bio = data.bio
