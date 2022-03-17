@@ -18,7 +18,7 @@ router = APIRouter(tags=['ideas'])
 @router.get('/ideas', response_model=List[IdeaReadWithRel])
 def get_all_ideas():
     with Session(engine) as session:
-        statement = select(Idea)
+        statement = select(Idea).options(selectinload('*'))
         results = session.exec(statement).all()
         return results
 
