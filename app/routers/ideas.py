@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 
-from app.models import Idea, Upvote, User, Comment, IdeaRead, IdeaReadWithRel
+from app.models import Idea, IdeaBase, Upvote, User, Comment, IdeaRead, IdeaReadWithRel
 from app.database import engine
 from app.schema import ReturnStatus
 from app.routers.auth import get_current_user
@@ -37,3 +37,19 @@ def create_idea(data: IdeaNew, user: User = Depends(get_current_user)):
         session.commit()
     return ReturnStatus()
 
+@router.put('/ideas/{idea_id}', response_model=ReturnStatus)
+def edit_idea(idea_id: int, data: IdeaBase, user: User = Depends(get_current_user)):
+    with Session(engine) as session:
+        idea = session.get(Idea, idea_id)
+        if not idea:
+            return ReturnStatus(success=False, msg='idea does not exits')
+        if idea.user_id is not user.id:
+            return ReturnStatus(success=False, msg='user does not own idea')
+        
+        idea.title = data.title
+        idea.description = data.description
+        session.add(idea)
+        session.commit()
+        session.refresh(idea)
+    
+    return ReturnStatus()
