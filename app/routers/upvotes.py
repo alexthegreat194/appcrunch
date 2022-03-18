@@ -17,6 +17,18 @@ def get_all_upvotes():
     with Session(engine) as session:
         return session.exec(select(Upvote).options(selectinload('*'))).all()
 
+@router.get('/upvotes/user/id/{user_id}', response_model=List[UpvoteReadWithRel])
+def get_user_upvotes(user_id: int):
+    with Session(engine) as session:
+        return session.exec(select(Upvote).where(Upvote.user_id == user_id).options(selectinload('*'))).all()
+
+@router.get('/upvotes/user/{username}', response_model=List[UpvoteReadWithRel])
+def get_user_upvotes(username: str):
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == username).options(selectinload('*'))).first()
+        if not user:
+            return []
+        return session.exec(select(Upvote).where(Upvote.user_id == user.id).options(selectinload('*'))).all()
 
 @router.post('/upvotes/upvote/{idea_id}', response_model=ReturnStatus)
 def upvote_idea_by_id(idea_id: int, downvote: Optional[bool] = False, user: User = Depends(get_current_user)):
